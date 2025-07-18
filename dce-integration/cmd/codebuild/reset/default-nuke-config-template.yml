@@ -58,7 +58,10 @@ resource-types:
     - RedshiftServerlessSnapshot # Deprecated service
     - RedshiftServerlessNamespace # Deprecated service
     - RedshiftServerlessWorkgroup # Deprecated service
-
+    - AWS::Timestream::Table
+    - AWS::Timestream::ScheduledQuery
+    - AWS::Timestream::Database
+    
 accounts:
   "{{ .ID}}": # Child Account
     presets:
