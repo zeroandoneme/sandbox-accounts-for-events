@@ -1,8 +1,9 @@
-namespace = "dce"
-namespace_prefix = "dce"
-aws_region = "us-east-1"
+namespace = "bluepi-event"
+namespace_prefix = "bluepi-event"
+aws_region = "eu-west-1"
 allowed_regions = [
     "us-east-1",
+    "eu-west-1",
     "us-west-2"
   ]
 
@@ -10,7 +11,7 @@ check_budget_enabled = true
 check_budget_schedule_expression = "rate(1 hour)"
 fan_out_update_lease_status_schedule_expression = "rate(1 hour)"
 populate_reset_queue_schedule_expression = "rate(1 hour)"
-budget_notification_from_email = "noreply@example.com"
+budget_notification_from_email = "noreply@bluepi.cloud"
 budget_notification_threshold_percentiles = [75, 100]
 principal_budget_period = "WEEKLY"
 

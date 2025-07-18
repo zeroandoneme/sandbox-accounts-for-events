@@ -6,15 +6,58 @@ regions:
 {{range .Regions}}  - "{{.}}"
 {{end}}
 
-account-blocklist:
+blocklist:
   - "{{ .ParentAccountID}}" # Arbitrary production account id
+
+settings:
+  EC2Image:
+    IncludeDisabled: true
+    IncludeDeprecated: true
+    DisableDeregistrationProtection: true
+  EC2Instance:
+    DisableStopProtection: true
+    DisableDeletionProtection: true
+  RDSInstance:
+    DisableDeletionProtection: true
+  CloudFormationStack:
+    DisableDeletionProtection: true
+  DynamoDBTable:
+    DisableDeletionProtection: true
+  QuickSightSubscription:
+    DisableTerminationProtection: true
 
 resource-types:
   excludes:
-    - S3Object # Let the S3Bucket delete all Objects instead of individual objects (optimization)
-    - GuardDutyDetector # as it is part of the GuardDuty integration
-    - SecurityHub # same as GuardDuty
-    - OSPackage # to avoid running into non-nukeable AWS-managed packages
+    - S3Object # Excluded because S3 bucket removal handles removing all S3Objects
+    - ServiceCatalogTagOption # Excluded due to https://github.com/rebuy-de/aws-nuke/issues/515
+    - ServiceCatalogTagOptionPortfolioAttachment # Excluded due to https://github.com/rebuy-de/aws-nuke/issues/515
+    - FMSNotificationChannel # Excluded because it's not available
+    - FMSPolicy # Excluded because it's not available
+    - MachineLearningMLModel # Excluded due to ML being unavailable
+    - MachineLearningDataSource # Excluded due to ML being unavailable
+    - MachineLearningBranchPrediction # Excluded due to ML being unavailable
+    - MachineLearningEvaluation # Excluded due to ML being unavailable
+    - RoboMakerDeploymentJob # Deprecated Service
+    - RoboMakerFleet # Deprecated Service
+    - RoboMakerRobot # Deprecated Service
+    - RoboMakerSimulationJob
+    - RoboMakerRobotApplication
+    - RoboMakerSimulationApplication
+    - OpsWorksApp # Deprecated service
+    - OpsWorksInstance # Deprecated service
+    - OpsWorksLayer # Deprecated service
+    - OpsWorksUserProfile # Deprecated service
+    - OpsWorksCMBackup # Deprecated service
+    - OpsWorksCMServer # Deprecated service
+    - OpsWorksCMServerState # Deprecated service
+    - CodeStarProject # Deprecated service
+    - CodeStarConnection # Deprecated service
+    - CodeStarNotification # Deprecated service
+    - Cloud9Environment # Deprecated service
+    - CloudSearchDomain # Deprecated service
+    - RedshiftServerlessSnapshot # Deprecated service
+    - RedshiftServerlessNamespace # Deprecated service
+    - RedshiftServerlessWorkgroup # Deprecated service
 
 accounts:
   "{{ .ID}}": # Child Account
@@ -22,6 +65,8 @@ accounts:
     - "sso"
     - "controltower"
     - "lza"
+    - "stackset"
+    - "defaults"
     filters:
       IAMPolicy:
         # DCE resources
@@ -68,7 +113,19 @@ presets:
       IAMRolePolicy:
         - type: "glob"
           value: "AWSReservedSSO_*"
-
+  stackset:
+    filters:
+      IAMRole:
+        - type: "glob"
+          value: "stacksets-exec-*"
+      IAMRolePolicyAttachment:
+        - type: "glob"
+          value: "stacksets-exec-*"
+      CloudFormationStack:
+        - type: "contains"
+          value: "StackSet-DCEAdmin" 
+        - type: "contains"
+          value: "StackSet-Event" 
   controltower:
     filters:
       CloudTrailTrail:
@@ -323,3 +380,23 @@ presets:
         - property: tag:Accelerator  
           type: "contains"
           value: "AWSAccelerator"
+  defaults:
+    filters:
+      EC2Subnet:
+        - property: DefaultVPC
+          value: "true"
+      EC2DefaultSecurityGroupRule:
+        - property: DefaultVPC
+          value: "true"
+      EC2DHCPOption:
+        - property: DefaultVPC
+          value: "true"
+      EC2VPC:
+        - property: IsDefault
+          value: "true"
+      EC2InternetGateway:
+        - property: DefaultVPC
+          value: "true"
+      EC2InternetGatewayAttachment:
+        - property: DefaultVPC
+          value: "true"

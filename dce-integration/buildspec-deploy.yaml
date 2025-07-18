@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      golang: 1.20
+      golang: 1.23
 
     commands:
       # Download and install TerraForm 
@@ -13,7 +13,7 @@ phases:
   pre_build:
     commands:
       # Download original DCE(TM) project from GitHub
-      - git clone --depth 1 --branch v0.38.0 https://github.com/Optum/dce.git
+      - git clone --depth 1 --branch v0.41.0 https://github.com/Optum/dce.git
 
       # Update/overwrite some files with "Sandbox Accounts for Events"-specific versions:
       # Let AWS Nuke ignore/skip deletion of OrganizationAccountAccess role
